@@ -2,9 +2,12 @@
 
 [![Build Status](https://travis-ci.org/j3k0/cordova-plugin-purchase.svg)](https://travis-ci.org/j3k0/cordova-plugin-purchase) [![Coverage Status](https://img.shields.io/coveralls/j3k0/cordova-plugin-purchase.svg)](https://coveralls.io/r/j3k0/cordova-plugin-purchase)
 
-**Author**: Jean-Christophe Hoelt - <hoelt@fovea.cc>
+**Author**: (upstream) Jean-Christophe Hoelt - <hoelt@fovea.cc>
+**Author**: (local additions) Dan Wright - <dan@ringr.com>
 
 ## Summary
+
+**This fork has a few changes helpful for using auto-renewing subscriptions; you should probably use upstream instead of this one...**
 
 This plugin allows **In-App Purchases** to be made from **Cordova and PhoneGap** applications, on **Android**, **iOS** and **Windows** (Store/Phone 8.1)
 
