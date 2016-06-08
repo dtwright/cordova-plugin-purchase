@@ -21,12 +21,12 @@ var callbackId = 0;
 /// See the ["Purchasing section"](#purchasing) to learn more about
 /// the purchase process.
 ///
-store.order = function(pid) {
+store.orderUpgrade = function(pid, pidNew) {
 
-    var p = pid;
+    var p = pidNew;
 
-    if (typeof pid === "string") {
-        p = store.products.byId[pid] || store.products.byAlias[pid];
+    if (typeof pidNew === "string") {
+        p = store.products.byId[pidNew] || store.products.byAlias[pidNew];
         if (!p) {
             p = new store.Product({
                 id: pid,
@@ -47,14 +47,13 @@ store.order = function(pid) {
 
     // Request the purchase.
     store.ready(function() {
-        // make sure the upgrade SKU is CLEARED so we don't accidentally call the wrong method
-        p.set("oldSku", undefined);
+        p.set("oldSku", pid);
         p.set("state", store.REQUESTED);
     });
 
     /// ### return value
     ///
-    /// `store.order()` returns a Promise with the following methods:
+    /// `store.orderUpgrade()` returns a Promise with the following methods:
     ///
     return {
         ///  - `then` - called when the order was successfully initiated
@@ -89,7 +88,7 @@ store.order = function(pid) {
 ///
 
 // Remove pending callbacks registered with `order`
-store.order.unregister = function(cb) {
+store.orderUpgrade.unregister = function(cb) {
     for (var i in callbacks) {
         if (callbacks[i].then === cb)
             delete callbacks[i].then;

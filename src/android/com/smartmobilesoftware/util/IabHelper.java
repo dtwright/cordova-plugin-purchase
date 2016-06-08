@@ -136,6 +136,7 @@ public class IabHelper {
     public static final int ERR_VERIFICATION_FAILED = ERROR_CODES_BASE + 17;
     public static final int ERR_BAD_RESPONSE = ERROR_CODES_BASE + 18;
     public static final int ERR_REFRESH = ERROR_CODES_BASE + 19;
+    public static final int ERR_UPGRADE_SUB_NOT_AVAILABLE = ERROR_CODES_BASE + 22;
 
     // Keys for the responses from InAppBillingService
     public static final String RESPONSE_CODE = "RESPONSE_CODE";
@@ -347,24 +348,36 @@ public class IabHelper {
     // the purchase finishes
     OnIabPurchaseFinishedListener mPurchaseListener;
 
+	/* bunch of different function signatures to handle different cases */
     public void launchPurchaseFlow(Activity act, String sku, int requestCode, OnIabPurchaseFinishedListener listener) {
-        launchPurchaseFlow(act, sku, requestCode, listener, "");
+        launchPurchaseFlow(act, sku, null, requestCode, listener, "");
     }
 
     public void launchPurchaseFlow(Activity act, String sku, int requestCode,
             OnIabPurchaseFinishedListener listener, String extraData) {
-        launchPurchaseFlow(act, sku, ITEM_TYPE_INAPP, requestCode, listener, extraData);
+        launchPurchaseFlow(act, sku, null, ITEM_TYPE_INAPP, requestCode, listener, extraData);
+    }
+
+    public void launchPurchaseFlow(Activity act, String sku, String itemType, int requestCode,
+            OnIabPurchaseFinishedListener listener, String extraData) {
+        launchPurchaseFlow(act, sku, null, itemType, requestCode, listener, extraData);
     }
 
     public void launchSubscriptionPurchaseFlow(Activity act, String sku, int requestCode,
             OnIabPurchaseFinishedListener listener) {
-        launchSubscriptionPurchaseFlow(act, sku, requestCode, listener, "");
+        launchPurchaseFlow(act, sku, null, ITEM_TYPE_SUBS, requestCode, listener, "");
     }
 
     public void launchSubscriptionPurchaseFlow(Activity act, String sku, int requestCode,
             OnIabPurchaseFinishedListener listener, String extraData) {
-        launchPurchaseFlow(act, sku, ITEM_TYPE_SUBS, requestCode, listener, extraData);
+        launchPurchaseFlow(act, sku, null, ITEM_TYPE_SUBS, requestCode, listener, extraData);
     }
+
+	// basically just a function alias for external clarity
+    public void launchUpgradePurchaseFlow(Activity act, String sku, String skuNew, String itemType, int requestCode,
+                        OnIabPurchaseFinishedListener listener, String extraData) {
+		launchPurchaseFlow(act, sku, skuNew, itemType, requestCode, listener, extraData);
+	}
 
     /**
      * Initiate the UI flow for an in-app purchase. Call this method to initiate an in-app purchase,
@@ -384,7 +397,7 @@ public class IabHelper {
      *     when the purchase completes. This extra data will be permanently bound to that purchase
      *     and will always be returned when the purchase is queried.
      */
-    public void launchPurchaseFlow(Activity act, String sku, String itemType, int requestCode,
+    public void launchPurchaseFlow(Activity act, String sku, String skuNew, String itemType, int requestCode,
                         OnIabPurchaseFinishedListener listener, String extraData) {
         checkNotDisposed();
         checkSetupDone("launchPurchaseFlow");
@@ -401,7 +414,15 @@ public class IabHelper {
 
         try {
             logDebug("Constructing buy intent for " + sku + ", item type: " + itemType);
-            Bundle buyIntentBundle = mService.getBuyIntent(3, mContext.getPackageName(), sku, itemType, extraData);
+			Bundle buyIntentBundle;
+			if(skuNew == null) {
+				buyIntentBundle = mService.getBuyIntent(3, mContext.getPackageName(), sku, itemType, extraData);
+			} else {
+				// upgrade request
+				List<String> oldSkus = new ArrayList<String>();
+				oldSkus.add(sku);
+				buyIntentBundle = mService.getBuyIntentToReplaceSkus(3, mContext.getPackageName(), oldSkus, skuNew, itemType, extraData);
+			}
             int response = getResponseCodeFromBundle(buyIntentBundle);
             if (response != BILLING_RESPONSE_RESULT_OK) {
                 logError("Unable to buy item, Error response: " + getResponseDesc(response));

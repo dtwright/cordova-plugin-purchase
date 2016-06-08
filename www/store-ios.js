@@ -370,6 +370,7 @@ var ERROR_CODES_BASE = 6777000;
 /*///*/     store.ERR_REFRESH             = ERROR_CODES_BASE + 19; // Failed to refresh the store.
 /*///*/     store.ERR_PAYMENT_EXPIRED     = ERROR_CODES_BASE + 20;
 /*///*/     store.ERR_DOWNLOAD            = ERROR_CODES_BASE + 21;
+/*///*/     store.ERR_UPGRADE_SUB_NOT_AVAILABLE = ERROR_CODES_BASE + 22; // Subscriptions are not available.
 
 ///
 /// ### product states
@@ -1153,6 +1154,8 @@ store.order = function(pid) {
 
     // Request the purchase.
     store.ready(function() {
+        // make sure the upgrade SKU is CLEARED so we don't accidentally call the wrong method
+        p.set("oldSku", undefined);
         p.set("state", store.REQUESTED);
     });
 

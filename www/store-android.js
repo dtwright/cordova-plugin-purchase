@@ -349,6 +349,7 @@ var ERROR_CODES_BASE = 6777000;
 /*///*/     store.ERR_REFRESH             = ERROR_CODES_BASE + 19; // Failed to refresh the store.
 /*///*/     store.ERR_PAYMENT_EXPIRED     = ERROR_CODES_BASE + 20;
 /*///*/     store.ERR_DOWNLOAD            = ERROR_CODES_BASE + 21;
+/*///*/     store.ERR_UPGRADE_SUB_NOT_AVAILABLE = ERROR_CODES_BASE + 22; // Subscriptions are not available.
 
 ///
 /// ### product states
@@ -1132,6 +1133,8 @@ store.order = function(pid) {
 
     // Request the purchase.
     store.ready(function() {
+        // make sure the upgrade SKU is CLEARED so we don't accidentally call the wrong method
+        p.set("oldSku", undefined);
         p.set("state", store.REQUESTED);
     });
 
@@ -2059,6 +2062,12 @@ InAppBilling.prototype.subscribe = function (success, fail, productId) {
 	}
 	return cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "subscribe", [productId]);
 };
+InAppBilling.prototype.subscribeUpgrade = function (success, fail, pidArray) {
+	if (this.options.showLog) {
+		log('upgradeSub called!');
+	}
+	return cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "subscribeUpgrade", [pidArray[0], pidArray[1]]);
+};
 InAppBilling.prototype.consumePurchase = function (success, fail, productId) {
 	if (this.options.showLog) {
 		log('consumePurchase called!');
@@ -2251,8 +2260,13 @@ store.when("requested", function(product) {
         product.set("state", store.INITIATED);
 
         var method = 'buy';
+        var pidArg = product.id;
         if (product.type === store.FREE_SUBSCRIPTION || product.type === store.PAID_SUBSCRIPTION) {
             method = 'subscribe';
+            if(typeof product.oldSku === "string") {
+                method = 'subscribeUpgrade';
+                pidArg = [product.id, product.oldSku];
+            }
         }
 
         store.inappbilling[method](function(data) {
@@ -2291,7 +2305,7 @@ store.when("requested", function(product) {
             else {
                 product.set("state", store.VALID);
             }
-        }, product.id);
+        }, pidArg);
     });
 });
 

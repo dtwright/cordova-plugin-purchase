@@ -76,6 +76,11 @@ public class InAppBillingPlugin extends CordovaPlugin {
 				// Get Product Id
 				final String sku = data.getString(0);
 				buy(sku);
+			} else if ("subscribeUpgrade".equals(action)) {
+				// Upgrade (or downgrade) a subscription - passed two IDs
+				final String skuNew = data.getString(0);
+				final String skuOrig = data.getString(1);
+				subscribeUpgrade(skuOrig,skuNew);
 			} else if ("subscribe".equals(action)) {
 				// Subscribe to an item
 				// Get Product Id
@@ -199,7 +204,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
 
 	}
 
-	// Buy an item
+	// Subscribe to an item
 	private void subscribe(final String sku){
 		if (mHelper == null){
 			callbackContext.error(IabHelper.ERR_PURCHASE + "|Billing plugin was not initialized");
@@ -223,6 +228,27 @@ public class InAppBillingPlugin extends CordovaPlugin {
 		mHelper.launchPurchaseFlow(cordova.getActivity(), sku, IabHelper.ITEM_TYPE_SUBS, RC_REQUEST, mPurchaseFinishedListener, payload);
 	}
 
+	// Upgrade/downgrade an existing subscription
+	private void subscribeUpgrade(final String skuOrig, final String skuNew){
+		if (mHelper == null){
+			callbackContext.error(IabHelper.ERR_PURCHASE + "|Billing plugin was not initialized");
+			return;
+		}
+		if (!mHelper.subscriptionsSupported()) {
+            callbackContext.error(IabHelper.ERR_UPGRADE_SUB_NOT_AVAILABLE + "|Upgrading subscriptions not supported on your device yet. Sorry!");
+            return;
+		}
+
+		/* TODO: for security, generate your payload here for verification. See the comments on
+         *        verifyDeveloperPayload() for more info. Since this is a sample, we just use
+         *        an empty string, but on a production app you should generate this. */
+		final String payload = "";
+
+		this.cordova.setActivityResultCallback(this);
+        Log.d(TAG, "Launching purchase flow for UPGRADING subscription: "+skuOrig+" to "+skuNew);
+
+		mHelper.launchUpgradePurchaseFlow(cordova.getActivity(), skuOrig, skuNew, IabHelper.ITEM_TYPE_SUBS, RC_REQUEST, mPurchaseFinishedListener, payload);
+	}
 
 	// Get the list of purchases
 	private JSONArray getPurchases() throws JSONException {

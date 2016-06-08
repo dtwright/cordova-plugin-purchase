@@ -114,8 +114,13 @@ store.when("requested", function(product) {
         product.set("state", store.INITIATED);
 
         var method = 'buy';
+        var pidArg = product.id;
         if (product.type === store.FREE_SUBSCRIPTION || product.type === store.PAID_SUBSCRIPTION) {
             method = 'subscribe';
+            if(typeof product.oldSku === "string") {
+                method = 'subscribeUpgrade';
+                pidArg = [product.id, product.oldSku];
+            }
         }
 
         store.inappbilling[method](function(data) {
@@ -154,7 +159,7 @@ store.when("requested", function(product) {
             else {
                 product.set("state", store.VALID);
             }
-        }, product.id);
+        }, pidArg);
     });
 });
 
