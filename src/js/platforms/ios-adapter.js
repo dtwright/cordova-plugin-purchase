@@ -154,7 +154,7 @@ function storekitInit() {
     store.log.debug("ios -> initializing storekit");
     storekit.init({
         debug:    store.verbosity >= store.DEBUG ? true : false,
-        noAutoFinish: true,
+        noAutoFinish: false, // see if this fixes our transaction-clearing problem!
         error:    storekitError,
         purchase: storekitPurchased,
         purchasing: storekitPurchasing,

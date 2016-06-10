@@ -496,12 +496,21 @@ unsigned char* unbase64( const char* ascii, int len, int *flen )
             [[SKPaymentQueue defaultQueue] startDownloads:downloads];
         }
         else if (g_autoFinishEnabled && canFinish) {
+            NSLog(@"FINISHING transaction!");
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
             [self transactionFinished:transaction];
         }
         else {
             [unfinishedTransactions setObject:transaction forKey:transactionIdentifier];
         }
+    }
+}
+
+- (void) paymentQueue:(SKPaymentQueue *)queue removedTransactions:(NSArray *)transactions
+{
+    for (SKPaymentTransaction *transaction in transactions)
+    {
+        NSLog(@"storeKit removed transaction: %@", transaction.transactionIdentifier);
     }
 }
 

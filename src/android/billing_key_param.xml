@@ -1,4 +1,3 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
-    <string name="billing_key_param">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApQzxgRlQv0wLMpVmMgzgbfr7NPjThobd38erzBLZiVk3wDvW4Kkm/+BJF6Fq8ghIDJggZVAcEKWD4t1mJxpfDYMBOx+zO+V+kvw5S/R0f9YBEOvjKDGyjR8lmkjrOBH5jNnhmD5TSo1jYhngzWDVxoMLjtbIQj9cqzIXn/I3j/2/uZZ2Ro2VeKTEYsTTafGV9i20SSuXLMZglgjhH1vW5ZDriPVb4mwvzyBj/f1zmGWu+Z8B2znAagYXYmKsDWajTNLFaoiM0i2MGYiiNYWHQNO8IzKeXXOoOQxyKWlO5wfR73fHWYlPELv6rVb71Kc2lsywSa1bcHUsnIGiKjlFpwIDAQAB</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 </resources>

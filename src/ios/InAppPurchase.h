@@ -46,6 +46,7 @@
 - (void) paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error;
 - (void) paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue;
 - (void) paymentQueue:(SKPaymentQueue *)queue updatedDownloads:(NSArray *)downloads;
+- (void) paymentQueue:(SKPaymentQueue *)queue removedTransactions:(NSArray *)transactions;
 
 - (void) debug: (CDVInvokedUrlCommand*)command;
 - (void) noAutoFinish: (CDVInvokedUrlCommand*)command;
