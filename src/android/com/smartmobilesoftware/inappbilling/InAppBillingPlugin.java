@@ -76,6 +76,9 @@ public class InAppBillingPlugin extends CordovaPlugin {
 				// Get Product Id
 				final String sku = data.getString(0);
 				buy(sku);
+			} else if ("canUpgradeSubs".equals(action)) {
+				int result = (mHelper.subUpgradeSupported()) ? 1 : 0;
+				callbackContext.success(result);
 			} else if ("subscribeUpgrade".equals(action)) {
 				// Upgrade (or downgrade) a subscription - passed two IDs
 				final String skuNew = data.getString(0);
@@ -234,7 +237,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
 			callbackContext.error(IabHelper.ERR_PURCHASE + "|Billing plugin was not initialized");
 			return;
 		}
-		if (!mHelper.subscriptionsSupported()) {
+		if (!mHelper.subUpgradeSupported()) {
             callbackContext.error(IabHelper.ERR_UPGRADE_SUB_NOT_AVAILABLE + "|Upgrading subscriptions not supported on your device yet. Sorry!");
             return;
 		}

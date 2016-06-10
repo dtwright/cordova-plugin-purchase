@@ -299,6 +299,7 @@ store.sandbox = false;
 // #include "when.js"
 // #include "once.js"
 // #include "order.js"
+// #include "orderUpgrade.js"
 // #include "ready.js"
 // #include "off.js"
 // #include "validator.js"

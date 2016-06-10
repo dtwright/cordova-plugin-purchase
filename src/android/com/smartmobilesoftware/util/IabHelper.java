@@ -82,6 +82,7 @@ public class IabHelper {
 
     // Are subscriptions supported?
     boolean mSubscriptionsSupported = false;
+    boolean mSubUpgradeSupported = false;
 
     // Is an asynchronous operation in progress?
     // (only one at a time can be in progress)
@@ -253,6 +254,16 @@ public class IabHelper {
                         logDebug("Subscriptions NOT AVAILABLE. Response: " + response);
                     }
 
+					// check for v5 subscriptions support - needed for sub upgrade purchase
+                    response = mService.isBillingSupported(5, packageName, ITEM_TYPE_SUBS);
+                    if (response == BILLING_RESPONSE_RESULT_OK) {
+                        logDebug("Subscription upgrading AVAILABLE.");
+                        mSubUpgradeSupported = true;
+                    }
+                    else {
+                        logDebug("Subscription upgrading NOT AVAILABLE. Response: " + response);
+                    }
+
                     mSetupDone = true;
                 }
                 catch (RemoteException e) {
@@ -327,6 +338,10 @@ public class IabHelper {
         return mSubscriptionsSupported;
     }
 
+    public boolean subUpgradeSupported() {
+        checkNotDisposed();
+        return mSubUpgradeSupported;
+    }
 
     /**
      * Callback that notifies when a purchase is finished.
@@ -417,11 +432,17 @@ public class IabHelper {
 			Bundle buyIntentBundle;
 			if(skuNew == null) {
 				buyIntentBundle = mService.getBuyIntent(3, mContext.getPackageName(), sku, itemType, extraData);
-			} else {
+			} else if (mSubUpgradeSupported) {
 				// upgrade request
 				List<String> oldSkus = new ArrayList<String>();
 				oldSkus.add(sku);
-				buyIntentBundle = mService.getBuyIntentToReplaceSkus(3, mContext.getPackageName(), oldSkus, skuNew, itemType, extraData);
+				buyIntentBundle = mService.getBuyIntentToReplaceSkus(5, mContext.getPackageName(), oldSkus, skuNew, itemType, extraData);
+			} else {
+				logError("Requested subscription upgrade, but not supported!");
+				flagEndAsync();
+				result = new IabResult(BILLING_RESPONSE_RESULT_DEVELOPER_ERROR, "Upgrade unavailable");
+				if (listener != null) listener.onIabPurchaseFinished(result, null);
+				return;
 			}
             int response = getResponseCodeFromBundle(buyIntentBundle);
             if (response != BILLING_RESPONSE_RESULT_OK) {

@@ -25,3 +25,5 @@
 // #include "platforms/ios-adapter.js"
 
 module.exports = store;
+//! not available on iOS
+store.canUpgradeSubscriptions = false;

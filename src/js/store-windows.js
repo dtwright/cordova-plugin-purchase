@@ -9,3 +9,5 @@ if (window) {
 }
 
 module.exports = store;
+//! this is not available on windows
+store.canUpgradeSubscriptions = false;

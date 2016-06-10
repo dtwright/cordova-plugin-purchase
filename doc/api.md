@@ -302,6 +302,7 @@ The `sandbox` property defines if you want to invoke the platform purchase sandb
     store.ERR_REFRESH             = ERROR_CODES_BASE + 19; // Failed to refresh the store.
     store.ERR_PAYMENT_EXPIRED     = ERROR_CODES_BASE + 20;
     store.ERR_DOWNLOAD            = ERROR_CODES_BASE + 21;
+    store.ERR_UPGRADE_SUB_NOT_AVAILABLE = ERROR_CODES_BASE + 22; // Subscriptions are not available.
 
 ### product states
 
@@ -659,6 +660,38 @@ the purchase process.
 ### return value
 
 `store.order()` returns a Promise with the following methods:
+
+ - `then` - called when the order was successfully initiated
+ - `error` - called if the order couldn't be initiated
+
+
+As usual, you can unregister the callbacks by using [`store.off()`](#off).
+
+
+## <a name="order"></a>*store.orderUpgrade(oldProduct, newProduct)*
+
+**Only available on Android with IAB API v5+**
+
+You should check the property `store.canUpgradeSubscriptions` (will be true/false) to
+see if this method is available.
+
+Upgrade a subscription from `oldProduct` to `newProduct`. Play store billing automatically
+manages the transitional billing and prorating.
+
+The `newProduct` argument can be either:
+
+ - the `store.Product` object
+ - the product `id`
+ - the product `alias`
+
+ The `oldProduct` argument must be the string product ID.
+
+See the ["Purchasing section"](#purchasing) to learn more about
+the purchase process.
+
+### return value
+
+`store.orderUpgrade()` returns a Promise with the following methods:
 
  - `then` - called when the order was successfully initiated
  - `error` - called if the order couldn't be initiated

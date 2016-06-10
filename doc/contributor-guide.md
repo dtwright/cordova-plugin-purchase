@@ -2,6 +2,7 @@
 
 *(generated from source files using `make doc-contrib)`*
 
+make sure this variable exists and is set to something safe
 # iOS Implementation
 
 The implementation of the unified API is a small layer
@@ -22,6 +23,8 @@ However, I found this ended-up providing a nice separation of concerns:
    - It reacts to product's changes of state, so that a product get's purchased
      when `REQUESTED`, or finished when `FINISHED` for instance.
 
+not available on iOS
+this is not available on windows
 ## Reacting to product state changes
 
 The iOS implementation monitors products changes of state to trigger
