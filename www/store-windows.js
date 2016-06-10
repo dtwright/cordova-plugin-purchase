@@ -1211,7 +1211,7 @@ var callbackId = 0;
 ///  - the product `id`
 ///  - the product `alias`
 ///
-///  The `oldProduct` argument must be the string product ID.
+/// The `oldProduct` argument must be the string product ID.
 ///
 /// See the ["Purchasing section"](#purchasing) to learn more about
 /// the purchase process.
