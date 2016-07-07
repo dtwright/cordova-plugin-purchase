@@ -34,8 +34,12 @@ var InAppPurchase = function () {
     this.receiptForTransaction = {};
     this.receiptForProduct = {};
     this.transactionForProduct = {};
+    // remove this because causing HUGE problem with exceeding localStorage quota with
+    // sandbox testing accounts
+    /*
     if (window.localStorage && window.localStorage.sk_receiptForTransaction)
         this.receiptForTransaction = JSON.parse(window.localStorage.sk_receiptForTransaction);
+    */
     if (window.localStorage && window.localStorage.sk_receiptForProduct)
         this.receiptForProduct = JSON.parse(window.localStorage.sk_receiptForProduct);
     if (window.localStorage && window.localStorage.sk_transactionForProduct)
@@ -346,7 +350,8 @@ InAppPurchase.prototype.updatedTransactionCallback = function (state, errorCode,
         this.receiptForTransaction[transactionIdentifier] = transactionReceipt;
         if (window.localStorage) {
             window.localStorage.sk_receiptForProduct = JSON.stringify(this.receiptForProduct);
-            window.localStorage.sk_receiptForTransaction = JSON.stringify(this.receiptForTransaction);
+            // removed b/c sandbox testing issues
+            //window.localStorage.sk_receiptForTransaction = JSON.stringify(this.receiptForTransaction);
         }
     }
 	switch(state) {
